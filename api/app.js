@@ -18,6 +18,7 @@ const mongoURI = "mongodb+srv://admin:123@cluster0.tz018.mongodb.net/?retryWrite
 const client = new MongoClient(mongoURI);
 let db;
 
+/*
 client.connect()
   .then(() => {
     db = client.db('despliegue_vercel_express');
@@ -32,6 +33,22 @@ app.get('/api/users', async (req, res) => {
   } catch (err) {
     res.status(500).json({ message: 'Error retrieving users', error: err });
   }
+});
+ */
+
+const usuarios = [
+  {
+    nombre: "adriano",
+    apellido: "condines"
+  },
+  {
+    nombre: "bruno",
+    apellido: "fanfino"
+  }
+];
+
+app.get('/api/users', async (req, res) => {
+    res.json(usuarios);
 });
 
 app.get('/api/users/:id', async (req, res) => {
