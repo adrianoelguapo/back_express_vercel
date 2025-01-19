@@ -14,7 +14,7 @@ app.use(helmet());
 app.use(cors());
 app.use(express.json());
 
-const uri = "mongodb+srv://admin:123@cluster0.tz018.mongodb.net/despliegue_vercel_express?retryWrites=true&w=majority&tls=true";
+const uri = "mongodb+srv://admin:123@cluster0.tz018.mongodb.net/despliegue_vercel_express?retryWrites=true&w=majority";
 const client = new MongoClient(uri);
 let db;
 
