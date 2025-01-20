@@ -56,7 +56,7 @@ app.post('/api/users', async (req, res) => {
     };
 
     const result = await db.collection('users').insertOne(newUser);
-    res.status(201).json({ _id: result.insertedId, ...newUser });
+    res.status(201).json(newUser);
   } catch (err) {
     res.status(400).json({ message: 'Error creating user', error: err });
   }
