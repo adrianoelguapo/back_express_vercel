@@ -18,32 +18,24 @@ const uri = "mongodb+srv://admin:123@cluster0.tz018.mongodb.net/despliegue_verce
 const client = new MongoClient(uri);
 let db;
 
-app.get('/api/users', async (req, res) => {
-  client.connect()
+
+client.connect()
   .then(() => {
     db = client.db('despliegue_vercel_express');
     console.log('Connected to MongoDB Atlas');
   })
   .catch((err) => console.error('Error connecting to MongoDB Atlas:', err));
 
+app.get('/api/users', async (req, res) => {
   try {
     const users = await db.collection('users').find().toArray();
     res.json(users);
   } catch (err) {
     res.status(500).json({ message: 'Error retrieving users', error: err });
   }
-
-  client.close();
 });
 
 app.get('/api/users/:name', async (req, res) => {
-  client.connect()
-  .then(() => {
-    db = client.db('despliegue_vercel_express');
-    console.log('Connected to MongoDB Atlas');
-  })
-  .catch((err) => console.error('Error connecting to MongoDB Atlas:', err));
-
   try {
     const users = await db.collection('users').find({ name: new ObjectId(req.params.name) });
     if (!users) {
@@ -53,18 +45,9 @@ app.get('/api/users/:name', async (req, res) => {
   } catch (err) {
     res.status(500).json({ message: 'Error retrieving user', error: err });
   }
-
-  client.close();
 });
 
 app.post('/api/users', async (req, res) => {
-  client.connect()
-  .then(() => {
-    db = client.db('despliegue_vercel_express');
-    console.log('Connected to MongoDB Atlas');
-  })
-  .catch((err) => console.error('Error connecting to MongoDB Atlas:', err));
-
   try {
     const newUser = {
       name: req.body.name,
@@ -77,8 +60,6 @@ app.post('/api/users', async (req, res) => {
   } catch (err) {
     res.status(400).json({ message: 'Error creating user', error: err });
   }
-
-  client.close();
 });
 
 app.use(middlewares.notFound);
