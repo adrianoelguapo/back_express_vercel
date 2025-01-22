@@ -14,7 +14,7 @@ app.use(helmet({ contentSecurityPolicy: false })); // Configuración más flexib
 app.use(cors());
 app.use(express.json());
 
-const uri = process.env.MONGODB_URI;
+const uri = "mongodb+srv://admin:123@cluster0.tz018.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 let client;
 let db;
 
