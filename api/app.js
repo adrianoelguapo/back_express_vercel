@@ -10,7 +10,7 @@ const middlewares = require('./middlewares');
 
 const app = express();
 
-const url = "mongodb+srv://admin:<db_password>@cluster0.tz018.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+const url = "mongodb+srv://admin:123@cluster0.tz018.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 const cliente = new MongoClient(url);
 cliente.connect();
 const db = cliente.db('despliegue_vercel_express');
