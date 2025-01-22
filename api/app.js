@@ -2,7 +2,7 @@ const express = require('express');
 const morgan = require('morgan');
 const helmet = require('helmet');
 const cors = require('cors');
-const { MongoClient, ObjectId } = require('mongodb');
+const { MongoClient } = require('mongodb');
 require('dotenv').config();
 
 const middlewares = require('./middlewares');
@@ -10,24 +10,27 @@ const middlewares = require('./middlewares');
 const app = express();
 
 app.use(morgan('dev'));
-app.use(helmet());
+app.use(helmet({ contentSecurityPolicy: false })); // Configuración más flexible
 app.use(cors());
 app.use(express.json());
 
-const uri = "mongodb+srv://admin:123@cluster0.tz018.mongodb.net/despliegue_vercel_express?retryWrites=true&w=majority";
-const client = new MongoClient(uri);
+const uri = process.env.MONGODB_URI;
+let client;
 let db;
 
-
-client.connect()
-  .then(() => {
+async function connectToDatabase() {
+  if (!client || !client.isConnected()) {
+    client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+    await client.connect();
     db = client.db('despliegue_vercel_express');
     console.log('Connected to MongoDB Atlas');
-  })
-  .catch((err) => console.error('Error connecting to MongoDB Atlas:', err));
+  }
+  return db;
+}
 
 app.get('/api/users', async (req, res) => {
   try {
+    const db = await connectToDatabase();
     const users = await db.collection('users').find().toArray();
     res.json(users);
   } catch (err) {
@@ -37,11 +40,12 @@ app.get('/api/users', async (req, res) => {
 
 app.get('/api/users/:name', async (req, res) => {
   try {
-    const users = await db.collection('users').find({ name: new ObjectId(req.params.name) });
-    if (!users) {
+    const db = await connectToDatabase();
+    const user = await db.collection('users').findOne({ name: req.params.name });
+    if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
-    res.json(users);
+    res.json(user);
   } catch (err) {
     res.status(500).json({ message: 'Error retrieving user', error: err });
   }
@@ -49,6 +53,7 @@ app.get('/api/users/:name', async (req, res) => {
 
 app.post('/api/users', async (req, res) => {
   try {
+    const db = await connectToDatabase();
     const newUser = {
       name: req.body.name,
       apellido: req.body.apellido,
@@ -63,6 +68,9 @@ app.post('/api/users', async (req, res) => {
 });
 
 app.use(middlewares.notFound);
-app.use(middlewares.errorHandler);
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ message: 'Internal Server Error', error: err.message });
+});
 
 module.exports = app;
