@@ -15,16 +15,10 @@ app.use(cors());
 app.use(express.json());
 
 const uri = "mongodb+srv://admin:123@cluster0.tz018.mongodb.net/despliegue_vercel_express?retryWrites=true&w=majority";
-const client = new MongoClient(uri);
-let db;
-
-
-client.connect()
-  .then(() => {
-    db = client.db('despliegue_vercel_express');
-    console.log('Connected to MongoDB Atlas');
-  })
-  .catch((err) => console.error('Error connecting to MongoDB Atlas:', err));
+const client = new MongoClient(url);
+cliente.connect();
+const db = client.db('despliegue_vercel_express');
+const coleccion = db.collection('users');
 
 app.get('/api/users', async (req, res) => {
   try {
