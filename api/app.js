@@ -22,7 +22,7 @@ const coleccion = db.collection('users');
 
 app.get('/api/users', async (req, res) => {
   try {
-    const users = await db.collection('users').find().toArray();
+    const users = await coleccion.find().toArray();
     res.json(users);
   } catch (err) {
     res.status(500).json({ message: 'Error retrieving users', error: err });
@@ -31,7 +31,7 @@ app.get('/api/users', async (req, res) => {
 
 app.get('/api/users/:name', async (req, res) => {
   try {
-    const users = await db.collection('users').find({ name: new ObjectId(req.params.name) });
+    const users = await db.coleccion.find({ name: new ObjectId(req.params.name) });
     if (!users) {
       return res.status(404).json({ message: 'User not found' });
     }
@@ -49,7 +49,7 @@ app.post('/api/users', async (req, res) => {
       tlf: req.body.tlf,
     };
 
-    const result = await db.collection('users').insertOne(newUser);
+    const result = await db.coleccion.insertOne(newUser);
     res.status(201).json(newUser);
   } catch (err) {
     res.status(400).json({ message: 'Error creating user', error: err });
